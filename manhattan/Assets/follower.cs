@@ -2,11 +2,10 @@
 using System.Collections;
 
 public class follower : MonoBehaviour {
-	public GameObject leader;
+	public GameObject[] swarm;
 	// Use this for initialization
 	void Start () {
-		leader= GameObject.FindGameObjectWithTag("Leader");
-
+		swarm = GameObject.FindGameObjectsWithTag("Leader");
 	}
 	
 	// Update is called once per frame
