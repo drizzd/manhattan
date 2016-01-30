@@ -45,13 +45,19 @@ public class Wolf_move2 : MonoBehaviour {
 
 	private Vector2 velocity;
 	public float speed;
-	private List<GameObject> sheep;
+	private List<GameObject> sheep = new List<GameObject>();
 
 	// Use this for initialization
 	void Start () {
-		sheep = new List<GameObject>(GameObject.FindGameObjectsWithTag ("Sheep"));
+		List<GameObject> allSheep = new List<GameObject>(GameObject.FindGameObjectsWithTag ("Sheep"));
+		foreach (GameObject aSheep in allSheep) {
+			if (aSheep.layer != 8) {
+				sheep.Add(aSheep);
+			}
+		}
+		Debug.Log (String.Format ("sheep length: {0}", sheep.Count));
 	}
-	
+
 	private void setVelocity(Vector2 velocity) {
 		this.velocity = velocity;
 		gameObject.GetComponent<Rigidbody>().velocity = speed * velocity ;

@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\FlockBehavior.cs" />
-     <Compile Include="Assets\SheepBehavior.cs" />
      <Compile Include="Assets\Sheep_move.cs" />
      <Compile Include="Assets\Wolf_move2.cs" />
      <Compile Include="Assets\Wolve_move.cs" />
