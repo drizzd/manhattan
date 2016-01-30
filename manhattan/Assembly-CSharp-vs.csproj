@@ -46,12 +46,13 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\FlockBehavior.cs" />
+     <Compile Include="Assets\SheepBehavior.cs" />
      <Compile Include="Assets\Sheep_move.cs" />
      <Compile Include="Assets\Wolf_move2.cs" />
      <Compile Include="Assets\Wolve_move.cs" />
      <Compile Include="Assets\WrapWolfCreate.cs" />
      <Compile Include="Assets\Wraparound.cs" />
-     <Compile Include="Assets\flock_behavior.cs" />
      <Compile Include="Assets\follower.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

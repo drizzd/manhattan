@@ -35,6 +35,10 @@ class Utils {
 		}
 		return velocity;
 	}
+
+	public static float getDistance(GameObject a, GameObject b) {
+		return Vector3.Distance(a.transform.position, b.transform.position);
+	}
 }
 
 public class Wolf_move2 : MonoBehaviour {
@@ -59,7 +63,7 @@ public class Wolf_move2 : MonoBehaviour {
 
 	public Vector2 computeAttractor() {
 		var nearestSheep = Utils.findNearestNeighbor (gameObject, sheep);
-		if (Vector3.Distance (nearestSheep.transform.position, transform.position) < 0.5f) {
+		if (Utils.getDistance (nearestSheep, gameObject) < 0.5f) {
 			return new Vector2(0, 0);
 		}
 		var direction = Utils.toVector2(nearestSheep.transform.position - transform.position);

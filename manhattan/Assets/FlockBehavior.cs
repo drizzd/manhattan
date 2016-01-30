@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-public class flock_behavior : MonoBehaviour {
+public class FlockBehavior : MonoBehaviour {
 	public float speed = 0.25f;
 	List<GameObject> swarm;
 	List<GameObject> detractors;
@@ -17,7 +17,7 @@ public class flock_behavior : MonoBehaviour {
 	private Vector2 velocity;
 
 	// Use this for initialization
-	void Start () {
+	public virtual void Start () {
 		swarm = new List<GameObject>(GameObject.FindGameObjectsWithTag("Sheep"));
 		swarm.Remove(gameObject);
 		Debug.Log (String.Format ("swarm: {0}", swarm.Count));
@@ -29,7 +29,7 @@ public class flock_behavior : MonoBehaviour {
 		setVelocity(velocity);
 	}
 
-	private void setVelocity(Vector2 velocity) {
+	protected void setVelocity(Vector2 velocity) {
 		this.velocity = velocity;
 		gameObject.GetComponent<Rigidbody>().velocity = speed * velocity ;
 	}
@@ -38,10 +38,6 @@ public class flock_behavior : MonoBehaviour {
 		return velocity;
 	}
 	
-	private Vector2 toVector2(Vector3 vector3) {
-		return new Vector2(vector3.x, vector3.y);
-	}
-
 	private Vector3 toVector3(Vector2 vector2) {
 		return new Vector3(vector2.x, vector2.y, 0);
 	}
@@ -49,27 +45,26 @@ public class flock_behavior : MonoBehaviour {
 	private Vector2 computeCohesion() {
 		Vector2 center = new Vector2(0, 0);
 		int count = 0;
+		if (swarm == null) {
+			return new Vector2(0, 0);
+		}
 		foreach (GameObject agent in swarm) {
-			if (getDistance(agent, gameObject) < cohesionRadius) {
-				center += toVector2(agent.transform.position);
+			if (Utils.getDistance(agent, gameObject) < cohesionRadius) {
+				center += Utils.toVector2(agent.transform.position);
 				count++;
 			}
 		}
 		center /= count;
-		Vector2 direction = center - toVector2(transform.position);
+		Vector2 direction = center - Utils.toVector2(transform.position);
 		direction.Normalize();
 		return direction;
-	}
-
-	static float getDistance(GameObject a, GameObject b) {
-		return (a.transform.position - b.transform.position).magnitude;
 	}
 
 	private Vector2 computeSeparation() {
 		Vector2 direction = new Vector2(0, 0);
 		foreach (GameObject agent in swarm) {
-			if (getDistance(agent, gameObject) < separationRadius) {
-				direction += toVector2(agent.transform.position - transform.position);
+			if (Utils.getDistance(agent, gameObject) < separationRadius) {
+				direction += Utils.toVector2(agent.transform.position - transform.position);
 			}
 		}
 		direction = -direction;
@@ -80,19 +75,12 @@ public class flock_behavior : MonoBehaviour {
 	private Vector2 computeAlignment() {
 		Vector2 direction = new Vector2(0, 0);
 		foreach (GameObject agent in swarm) {
-			if (getDistance(agent, gameObject) < alignmentRadius) {
-				direction += agent.GetComponent<flock_behavior>().getVelocity();
+			if (Utils.getDistance(agent, gameObject) < alignmentRadius) {
+				direction += agent.GetComponent<FlockBehavior>().getVelocity();
 			}
 		}
 		direction.Normalize();
 		return direction;
-	}
-
-	private float reflectAtLimit(float velocity, float x, float limit) {
-		if (Math.Abs (x) > limit) {
-			velocity = -Math.Sign (x);
-		}
-		return velocity;
 	}
 
 	private Vector2 computeDetractor() {
@@ -101,7 +89,7 @@ public class flock_behavior : MonoBehaviour {
 		Vector3 minPosition = new Vector2(0, 0);
 		Boolean first = true;
 		foreach (GameObject detractor in detractors) {
-			float distance = getDistance (detractor, gameObject);
+			float distance = Utils.getDistance (detractor, gameObject);
 			if (first || distance < minDistance) {
 				minDistance = distance;
 				minPosition = detractor.transform.position;
@@ -109,10 +97,18 @@ public class flock_behavior : MonoBehaviour {
 			first = false;
 		}
 		if (!first && minDistance < detractorRadius) {
-			direction = toVector2(transform.position - minPosition);
+			direction = Utils.toVector2(transform.position - minPosition);
 			direction.Normalize ();
 		}
 		return direction;
+	}
+
+	protected Vector2 combineDirection() {
+		return Time.deltaTime * 10f * (
+			cohesion * computeCohesion() +
+			separation * computeSeparation() +
+			alignment * computeAlignment() +
+			detractorWeight * computeDetractor());
 	}
 
 	// Update is called once per frame
@@ -121,14 +117,10 @@ public class flock_behavior : MonoBehaviour {
 
 		//float height = Camera.main.orthographicSize;
 		//float width = (height * Screen.width) / Screen.height;
-		//nextVelocity.y = reflectAtLimit (nextVelocity.y, transform.position.y, height);
-		//nextVelocity.x = reflectAtLimit (nextVelocity.x, transform.position.x, width);
+		//nextVelocity.y = Utils.reflectAtLimit (nextVelocity.y, transform.position.y, height);
+		//nextVelocity.x = Utils.reflectAtLimit (nextVelocity.x, transform.position.x, width);
 
-		nextVelocity += Time.deltaTime * 10f * (
-			cohesion * computeCohesion() +
-			separation * computeSeparation() +
-			alignment * computeAlignment() +
-			detractorWeight * computeDetractor());
+		nextVelocity += combineDirection();
 		//Debug.Log (String.Format ("DeltaTime: {0}", Time.deltaTime));
 		nextVelocity.Normalize();
 
