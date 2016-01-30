@@ -22,6 +22,16 @@ public class WrapWolfCreate : MonoBehaviour {
 		clone = Instantiate(DummyWolf,transform.position + new Vector3(0,vert*2,0),Quaternion.identity) as Transform;
 		clone.parent = transform;
 
+		clone = Instantiate(DummyWolf,transform.position + new Vector3(-horz*2,-vert*2,0),Quaternion.identity) as Transform;
+		clone.parent = transform;
+		clone = Instantiate(DummyWolf,transform.position + new Vector3(horz*2,vert*2,0),Quaternion.identity) as Transform;
+		clone.parent = transform;
+		clone = Instantiate(DummyWolf,transform.position + new Vector3(-horz*2,vert*2,0),Quaternion.identity) as Transform;
+		clone.parent = transform;
+		clone = Instantiate(DummyWolf,transform.position + new Vector3(horz*2,-vert*2,0),Quaternion.identity) as Transform;
+		clone.parent = transform;
+
+
 	}
 	
 	// Update is called once per frame
