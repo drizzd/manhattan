@@ -16,9 +16,13 @@ public class FlockBehavior : MonoBehaviour {
 	public float detractorWeight = 1f;
 	private Vector2 velocity;
 
-	// Use this for initialization
 	public virtual void Start () {
-		swarm = new List<GameObject>(GameObject.FindGameObjectsWithTag("Sheep"));
+		Init ("Sheep");
+	}
+
+	// Use this for initialization
+	public void Init (String tag) {
+		swarm = new List<GameObject>(GameObject.FindGameObjectsWithTag(tag));
 		swarm.Remove(gameObject);
 		Debug.Log (String.Format ("swarm: {0}", swarm.Count));
 		detractors = new List<GameObject>(GameObject.FindGameObjectsWithTag ("Wolf"));

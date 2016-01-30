@@ -3,12 +3,9 @@ using System;
 using System.Collections.Generic;
 
 public class SheepBehavior : FlockBehavior {
-	private int whatever;
-
 	// Use this for initialization
 	public override void Start () {
-		base.Start();
-		whatever = 1;
+		base.Init ("Sheep");
 	}
 
 	// Update is called once per frame
