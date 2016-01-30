@@ -46,6 +46,11 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Sheep_move.cs" />
+     <Compile Include="Assets\Wolf_move2.cs" />
+     <Compile Include="Assets\Wolve_move.cs" />
+     <Compile Include="Assets\WrapWolfCreate.cs" />
+     <Compile Include="Assets\Wraparound.cs" />
      <Compile Include="Assets\flock_behavior.cs" />
      <Compile Include="Assets\follower.cs" />
  <Reference Include="UnityEngine.UI">

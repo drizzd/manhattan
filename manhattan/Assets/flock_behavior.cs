@@ -5,12 +5,15 @@ using System.Collections.Generic;
 public class flock_behavior : MonoBehaviour {
 	public float speed = 0.25f;
 	List<GameObject> swarm;
+	List<GameObject> detractors;
 	public float cohesion = 1.0f;
 	public float alignment = 1.0f;
 	public float separation = 1.0f;
 	public float alignmentRadius = 1f;
 	public float cohesionRadius = 1f;
 	public float separationRadius = 0.5f;
+	public float detractorRadius = 2f;
+	public float detractorWeight = 1f;
 	private Vector2 velocity;
 
 	// Use this for initialization
@@ -18,6 +21,7 @@ public class flock_behavior : MonoBehaviour {
 		swarm = new List<GameObject>(GameObject.FindGameObjectsWithTag("Sheep"));
 		swarm.Remove(gameObject);
 		Debug.Log (String.Format ("swarm: {0}", swarm.Count));
+		detractors = new List<GameObject>(GameObject.FindGameObjectsWithTag ("Wolf"));
 
 		//Vector2 velocity = new Vector2(UnityEngine.Random.value, UnityEngine.Random.value);
 		//velocity.Normalize ();
@@ -91,16 +95,40 @@ public class flock_behavior : MonoBehaviour {
 		return velocity;
 	}
 
+	private Vector2 computeDetractor() {
+		Vector2 direction = new Vector2(0, 0);
+		float minDistance = 0f;
+		Vector3 minPosition = new Vector2(0, 0);
+		Boolean first = true;
+		foreach (GameObject detractor in detractors) {
+			float distance = getDistance (detractor, gameObject);
+			if (first || distance < minDistance) {
+				minDistance = distance;
+				minPosition = detractor.transform.position;
+			}
+			first = false;
+		}
+		if (!first && minDistance < detractorRadius) {
+			direction = toVector2(transform.position - minPosition);
+			direction.Normalize ();
+		}
+		return direction;
+	}
+
 	// Update is called once per frame
 	void FixedUpdate () {
 		Vector2 nextVelocity = getVelocity();
 
-		float height = Camera.main.orthographicSize;
-		float width = (height * Screen.width) / Screen.height;
-		nextVelocity.y = reflectAtLimit (nextVelocity.y, transform.position.y, height);
-		nextVelocity.x = reflectAtLimit (nextVelocity.x, transform.position.x, width);
+		//float height = Camera.main.orthographicSize;
+		//float width = (height * Screen.width) / Screen.height;
+		//nextVelocity.y = reflectAtLimit (nextVelocity.y, transform.position.y, height);
+		//nextVelocity.x = reflectAtLimit (nextVelocity.x, transform.position.x, width);
 
-		nextVelocity += Time.deltaTime * 10f * (cohesion * computeCohesion() + separation * computeSeparation() + alignment * computeAlignment());
+		nextVelocity += Time.deltaTime * 10f * (
+			cohesion * computeCohesion() +
+			separation * computeSeparation() +
+			alignment * computeAlignment() +
+			detractorWeight * computeDetractor());
 		//Debug.Log (String.Format ("DeltaTime: {0}", Time.deltaTime));
 		nextVelocity.Normalize();
 
